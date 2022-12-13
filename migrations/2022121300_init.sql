@@ -1,0 +1,5 @@
+CREATE USER 'admin' IDENTIFIED BY 'admin';
+GRANT ALL PRIVILEGES ON *.* TO 'admin';
+
+CREATE DATABASE IF NOT EXISTS  geoadvisor;
+USE geoadvisor;
