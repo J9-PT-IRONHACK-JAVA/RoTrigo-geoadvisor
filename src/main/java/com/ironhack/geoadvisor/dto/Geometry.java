@@ -8,3 +8,4 @@ import lombok.ToString;
 public class Geometry {
     private Location location;
 }
+

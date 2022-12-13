@@ -1,10 +1,11 @@
 package com.ironhack.geoadvisor;
 
+import com.ironhack.geoadvisor.dto.PlaceDetails;
 import com.ironhack.geoadvisor.dto.PlacesResult;
 import com.ironhack.geoadvisor.proxy.GeocodingProxy;
 import com.ironhack.geoadvisor.proxy.PlacesProxy;
 import com.ironhack.geoadvisor.service.ConsoleService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -13,13 +14,11 @@ import static java.lang.System.exit;
 
 @Profile("!test")
 @Component
+@RequiredArgsConstructor
 public class AppStarter implements CommandLineRunner {
-    @Autowired
-    GeocodingProxy geocodingProxy;
-    @Autowired
-    PlacesProxy placesProxy;
-    @Autowired
-    ConsoleService consoleSVC;
+    private final GeocodingProxy geocodingProxy;
+    private final PlacesProxy placesProxy;
+    private final ConsoleService consoleSVC;
 
     private final String apiKey = "AIzaSyAaD1TskQMYU6WhRsKDsvg0Qh4H5NY8XNg";
 
@@ -39,14 +38,26 @@ public class AppStarter implements CommandLineRunner {
                     "500",
                     null
             );
-            if (placesResponse != null && placesResponse.getStatus().equals("OK")){
+            if (placesResponse != null && placesResponse.getStatus().equals("OK")) {
                 var restaurants = placesResponse.getResults();
                 System.out.println("These are the restaurants nearby:");
-                for (PlacesResult r :restaurants) {
+
+                for (PlacesResult r : restaurants) {
                     System.out.println(r);
                 }
+
+                var placeId = restaurants.get(0).getPlaceId();
+
+                var placeResponse = placesProxy.getRestaurantDetails(
+                        apiKey,
+                        placeId,
+                        "formatted_phone_number,website,serves_vegetarian_food"
+                        );
+
+                System.out.println(placeResponse.getResult());
             }
             System.out.println(placesResponse);
+
 
         } else {
             System.out.println("Location not found :(");
