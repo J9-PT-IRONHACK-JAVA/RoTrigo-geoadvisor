@@ -6,7 +6,7 @@ import lombok.ToString;
 
 @ToString
 @Data
-public class Result {
+public class GeocodeResult {
     @JsonProperty("formatted_address")
     private String formattedAddress;
     private Geometry geometry;
