@@ -17,8 +17,9 @@ public class PlacesResult {
     private Geometry geometry;
     private Double rating;
     @JsonProperty("price_level")
-    private Double priceLevel;
+    private Integer priceLevel;
     private List<String> types;
     @JsonProperty("user_ratings_total")
     private Integer userRatingsTotal;
+    private String vicinity;
 }
