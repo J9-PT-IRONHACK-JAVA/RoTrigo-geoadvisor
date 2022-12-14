@@ -3,16 +3,16 @@ package com.ironhack.geoadvisor.model;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Data
 @Entity
 @NoArgsConstructor
+@Table(name = Restaurant.TABLE_NAME)
 public class Restaurant {
+    public static final String TABLE_NAME = "restaurants";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,4 +33,6 @@ public class Restaurant {
         this.priceLevel = priceLevel;
         this.address = address;
     }
+
+    // TODO toString() method for nice printing
 }
