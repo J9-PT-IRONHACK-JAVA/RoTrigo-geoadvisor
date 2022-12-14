@@ -1,6 +1,7 @@
+gmaps:
+  apiKey: ${GMAPS_APIKEY}
 server:
   port: 8083
-
 spring:
   profiles:
     active: demo
