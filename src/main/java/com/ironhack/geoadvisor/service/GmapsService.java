@@ -19,6 +19,7 @@ public class GmapsService {
     private String apiKey;
     private final GeocodingProxy geocodingProxy;
     private final PlacesProxy placesProxy;
+    private final FavouriteService favouriteSVC;
 
     public Location getLocation(String address) throws Exception {
         var formattedAddress = address.replace("\s", "+");
@@ -28,7 +29,7 @@ public class GmapsService {
         return response.getResults().get(0).getGeometry().getLocation();
     }
 
-    public List<Restaurant> getNearbyRestaurants(Location location, int radius, Optional<String> keyword)
+    public List<Restaurant> getNearbyRestaurants(Location location, int radius, String keyword)
             throws Exception {
         String formattedLocation = "%s,%s".formatted(location.getLatitude(), location.getLongitude());
         var response = placesProxy.getRestaurants(
@@ -71,13 +72,14 @@ public class GmapsService {
     }
 
     private Restaurant mapRestaurant(PlacesResult result) {
-        return new Restaurant(
+        var restaurant = new Restaurant(
                 result.getPlaceId(),
                 result.getName(),
                 result.getRating(),
                 result.getPriceLevel(),
                 result.getVicinity()
         );
+        restaurant.setFavourite(favouriteSVC.exists(restaurant));
+        return restaurant;
     }
-
 }

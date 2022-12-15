@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Table(name = Restaurant.TABLE_NAME)
 public class Restaurant {
-    public static final String TABLE_NAME = "restaurants";
+    public static final String TABLE_NAME = "favourite_restaurants";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,14 +25,18 @@ public class Restaurant {
     private String website;
     private BigDecimal latitude;
     private BigDecimal longitude;
+    private boolean isFavourite = false;
 
     public Restaurant(String placeId, String name, Double rating, Integer priceLevel, String address) {
         this.placeId = placeId;
         this.name = name;
         this.rating = rating;
-        this.priceLevel = priceLevel;
+        this.priceLevel = (priceLevel == null) ? 0 : priceLevel;
         this.address = address;
     }
 
+    public boolean hasDetails(){
+        return this.phoneNumber == null;
+    }
     // TODO toString() method for nice printing
 }

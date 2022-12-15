@@ -2,6 +2,7 @@ package com.ironhack.geoadvisor.service;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.ironhack.geoadvisor.enums.MenuOption;
+import com.ironhack.geoadvisor.model.Restaurant;
 import com.ironhack.geoadvisor.utils.Colors;
 import com.ironhack.geoadvisor.utils.Prints;
 import com.ironhack.geoadvisor.utils.Tools;
@@ -22,7 +23,13 @@ public class ConsoleService {
 
 
     public MenuOption askMainMenu(MenuOption[] options, String title) {
-        title += "What do you want to do?";
+        return askMenu(title, options, true);
+    }
+
+    public MenuOption askSingleMenu(Object object, MenuOption[] options) {
+        String className = object.getClass().getSimpleName();
+        String title = "\t%s%s MENU\n\n".formatted(Colors.YELLOW_BOLD, className.toUpperCase()) + Colors.WHITE_BRIGHT
+                + "%s\n\n What do you want to do with this %s?".formatted(object.toString(), className);
         return askMenu(title, options, true);
     }
 
@@ -164,11 +171,7 @@ public class ConsoleService {
         var table = Colors.BLACK + Colors.WHITE_BACKGROUND;
         if (list.size() > 0) {
             var object = list.get(0);
-            /*if (object instanceof Lead) table += buildLeadsTable(list, offset);
-            if (object instanceof Contact) table += buildContactsTable(list, offset);
-            if (object instanceof Account) table += buildAccountsTable(list, offset);
-            if (object instanceof Opportunity) table += buildOpportunitiesTable(list, offset);
-            if (object instanceof User) table += buildUsersTable(list, offset);*/
+            if (object instanceof Restaurant) table += buildRestaurantsTable(list, offset);
         }
         menu.append(Prints.tableHeadersToBold(table));
         menu.append(Colors.RESET + "\n('back' --> go back | 'export [FILE_NAME.json]' = extract to JSON)\n");
@@ -186,22 +189,21 @@ public class ConsoleService {
         return menu.toString();
     }
 
-
-    /*
-    public String buildUsersTable(List<Object> users, int offset) {
-        var headersArray = new String[]{" ", "Username", "Level", "Manager"};
+    public String buildRestaurantsTable(List<Object> restaurants, int offset) {
+        var headersArray = new String[]{" ", "NAME", "RATING", "PRICE", "ADDRESS", " "};
         var data = new ArrayList<String[]>();
-        int limit = Math.min(offset + 10, users.size());
+        int limit = Math.min(offset + 10, restaurants.size());
         for (int i = offset; i < limit; i++) {
-            var u = (User)users.get(i);
-            String manager = (u.getManager() == null)? "" : u.getManager().getUserName();
+            var r = (Restaurant)restaurants.get(i);
+            String favourite = r.isFavourite() ? "❤️ " : " ";
+            String priceLevel = "💰".repeat(r.getPriceLevel());
             data.add(new String[]{
-                    String.valueOf(i+1), u.getUserName(), u.getLevel().toString(),
-                    manager
+                    String.valueOf(i+1), r.getName(), String.valueOf(r.getRating()),
+                    priceLevel, r.getAddress(), favourite
             });
         }
         return AsciiTable.getTable(headersArray, data.toArray(String[][]::new));
-    }*/
+    }
 
 
 

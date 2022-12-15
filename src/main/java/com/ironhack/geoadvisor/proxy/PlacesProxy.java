@@ -16,7 +16,7 @@ public interface PlacesProxy {
             @RequestParam("location") String location,
             @RequestParam("type") String type,
             @RequestParam("radius") String radius,
-            @RequestParam(value = "keyword", required = false) Optional<String> keyword
+            @RequestParam(value = "keyword", required = false) String keyword
             );
 
     @GetMapping("/details/json")
