@@ -1,9 +1,11 @@
 package com.ironhack.geoadvisor.service;
 
 import com.github.freva.asciitable.AsciiTable;
+import com.ironhack.geoadvisor.dto.Location;
 import com.ironhack.geoadvisor.enums.MenuOption;
 import com.ironhack.geoadvisor.model.Restaurant;
 import com.ironhack.geoadvisor.utils.Colors;
+import com.ironhack.geoadvisor.utils.Coordinates;
 import com.ironhack.geoadvisor.utils.Prints;
 import com.ironhack.geoadvisor.utils.Tools;
 import lombok.RequiredArgsConstructor;
@@ -21,15 +23,27 @@ public class ConsoleService {
     private final Scanner prompt = new Scanner(System.in);
 
 
-
     public MenuOption askMainMenu(MenuOption[] options, String title) {
         return askMenu(title, options, true);
     }
 
-    public MenuOption askSingleMenu(Object object, MenuOption[] options) {
-        String className = object.getClass().getSimpleName();
-        String title = "\t%s%s MENU\n\n".formatted(Colors.YELLOW_BOLD, className.toUpperCase()) + Colors.WHITE_BRIGHT
-                + "%s\n\n What do you want to do with this %s?".formatted(object.toString(), className);
+    public MenuOption askSingleMenu(Restaurant restaurant, MenuOption[] options, Location... locations) {
+        var distances = new StringBuilder();
+        var restLocation = new Location(restaurant.getLatitude(), restaurant.getLongitude());
+        for (int i = 0; i < locations.length; i++) {
+            var locationDistance = Coordinates.getDistance(locations[i], restLocation);
+            distances.append("Location %s: %s\nDistance to restaurant (m): %s\n\n".formatted(
+                    i, locations[i].getAddress(), locationDistance));
+        }
+
+        var title =  """
+                \t%sRESTAURANT MENU%s
+               
+                %s
+                %s
+                What do you want to do with this restaurant?
+                """.formatted(Colors.YELLOW_BOLD,Colors.WHITE_BRIGHT,restaurant.toString(),distances);
+
         return askMenu(title, options, true);
     }
 

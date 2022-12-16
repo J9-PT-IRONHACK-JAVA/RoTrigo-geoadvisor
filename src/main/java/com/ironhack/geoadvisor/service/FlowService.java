@@ -39,7 +39,7 @@ public class FlowService {
         mainMenu();
     }
 
-    private void singleMenu(Restaurant restaurant) {
+    private void singleMenu(Restaurant restaurant, Location... locations) {
         var optionList = new ArrayList<MenuOption>();
         if (restaurant.isFavourite()) {
             optionList.add(MenuOption.REMOVE_FAVOURITE);
@@ -53,7 +53,7 @@ public class FlowService {
         }
         optionList.add(MenuOption.TO_MAIN_MENU);
 
-        var option = consoleSVC.askSingleMenu(restaurant, optionList.toArray(MenuOption[]::new));
+        var option = consoleSVC.askSingleMenu(restaurant, optionList.toArray(MenuOption[]::new), locations);
         if (option == null) return;
         switch (option) {
             case GET_MORE_DETAILS -> {
@@ -85,14 +85,14 @@ public class FlowService {
         }
     }
 
-    private void showRestaurants(List<Restaurant> restaurants) {
+    private void showRestaurants(List<Restaurant> restaurants, Location... locations) {
         String title = "Select a restaurant:";
         if (restaurants == null) {
             restaurants = favouritesSVC.getAll();
         }
         var restaurantObj = consoleSVC.askChooseObject(new ArrayList<>(restaurants), title);
         if (restaurantObj != null) {
-            singleMenu((Restaurant)restaurantObj);
+            singleMenu((Restaurant)restaurantObj, locations);
         } else {
             return;
         }
@@ -112,7 +112,7 @@ public class FlowService {
             locations.add(location);
         }
 
-        var center = Coordinates.midPoint(locations.toArray(Location[]::new));
+        var center = Coordinates.getCenter(locations.toArray(Location[]::new));
         System.out.printf("""
             Center located successfully! These are the coordinates:
             \tlatitude = %s
@@ -129,10 +129,10 @@ public class FlowService {
             System.err.println("Couldn't get address from coordinates :(");
         }
         consoleSVC.askContinue();
-        var restaurants = askRestaurants(center);
+        var restaurants = searchRestaurants(center);
         if (restaurants == null) return;
 
-        showRestaurants(restaurants);
+        showRestaurants(restaurants, locations.toArray(Location[]::new));
     }
 
     private void simpleSearch() {
@@ -144,13 +144,13 @@ public class FlowService {
             \tlongitude = %s
             """, location.getLatitude(), location.getLongitude());
         consoleSVC.askContinue();
-        var restaurants = askRestaurants(location);
+        var restaurants = searchRestaurants(location);
         if (restaurants == null) return;
 
-        showRestaurants(restaurants);
+        showRestaurants(restaurants, location);
     }
 
-    private List<Restaurant> askRestaurants(Location location) {
+    private List<Restaurant> searchRestaurants(Location location) {
         var radius = consoleSVC.askPositiveInt("Introduce the search radius (m):");
         if (radius == null) return null;
         var keyword = consoleSVC.ask(
@@ -169,7 +169,7 @@ public class FlowService {
             System.err.println(e.getMessage());
         }
         var repeat = consoleSVC.askConfirmation("Do you want to try again?");
-        if (repeat) askRestaurants(location);
+        if (repeat) searchRestaurants(location);
         return null;
     }
 

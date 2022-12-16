@@ -34,16 +34,42 @@ public class Restaurant {
     private BigDecimal longitude;
     private boolean isFavourite = false;
 
-    public Restaurant(String placeId, String name, Double rating, Integer priceLevel, String address) {
+    public Restaurant(String placeId, String name, Double rating, Integer priceLevel,
+                      String address, BigDecimal latitude, BigDecimal longitude) {
         this.placeId = placeId;
         this.name = name;
         this.rating = rating;
         this.priceLevel = (priceLevel == null) ? 0 : priceLevel;
         this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public boolean hasDetails(){
         return this.phoneNumber != null;
     }
-    // TODO toString() method for nice printing
+
+    public String toString(){
+        var text ="""
+                Name        = %s
+                Rating      = %s
+                Price level = %s
+                Address     = %s
+                Favourite   = %s
+                """.formatted(
+                        getName(),
+                        getRating(),
+                        getPriceLevel(),
+                        getAddress(),
+                        isFavourite()?"YES":"NO"
+        );
+
+        if (hasDetails()) {
+            text += """
+                    Phone number = %s
+                    Website      = %s
+                    """.formatted(getPhoneNumber(), getWebsite());
+        }
+        return text;
+    }
 }

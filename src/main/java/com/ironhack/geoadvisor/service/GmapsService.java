@@ -28,7 +28,9 @@ public class GmapsService {
         var response = geocodingProxy.getLocation(apiKey, formattedAddress);
         processResponseStatus(response);
         if (response.getResults().size() == 0) return null;
-        return response.getResults().get(0).getGeometry().getLocation();
+        var location = response.getResults().get(0).getGeometry().getLocation();
+        location.setAddress(address);
+        return location;
     }
 
     public String getAddress(Location location) throws Exception {
@@ -128,7 +130,9 @@ public class GmapsService {
                 result.getName(),
                 result.getRating(),
                 result.getPriceLevel(),
-                result.getVicinity()
+                result.getVicinity(),
+                result.getGeometry().getLocation().getLatitude(),
+                result.getGeometry().getLocation().getLongitude()
         );
         restaurant.setFavourite(favouriteSVC.exists(restaurant));
         return restaurant;
