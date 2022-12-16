@@ -3,6 +3,7 @@ package com.ironhack.geoadvisor.service;
 import com.ironhack.geoadvisor.dto.Location;
 import com.ironhack.geoadvisor.enums.MenuOption;
 import com.ironhack.geoadvisor.model.Restaurant;
+import com.ironhack.geoadvisor.utils.Coordinates;
 import com.ironhack.geoadvisor.utils.Prints;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -102,7 +103,36 @@ public class FlowService {
     }
 
     private void centerSearch() {
-        mainMenu();
+        var numLocations = consoleSVC.askPositiveInt("How many locations will you provide?");
+        if (numLocations == null) return;
+
+        var locations = new ArrayList<Location>();
+        for (int i = 0; i < numLocations; i++) {
+            var location = askLocation();
+            locations.add(location);
+        }
+
+        var center = Coordinates.midPoint(locations.toArray(Location[]::new));
+        System.out.printf("""
+            Center located successfully! These are the coordinates:
+            \tlatitude = %s
+            \tlongitude = %s
+            """, center.getLatitude(), center.getLongitude());
+        try {
+            var centerAddress = gmapsSVC.getAddress(center);
+            if (centerAddress == null || centerAddress.equals("")) {
+                System.out.println("Couldn't get address from coordinates :(");
+            } else {
+                System.out.println(centerAddress);
+            }
+        } catch (Exception e) {
+            System.err.println("Couldn't get address from coordinates :(");
+        }
+        consoleSVC.askContinue();
+        var restaurants = askRestaurants(center);
+        if (restaurants == null) return;
+
+        showRestaurants(restaurants);
     }
 
     private void simpleSearch() {

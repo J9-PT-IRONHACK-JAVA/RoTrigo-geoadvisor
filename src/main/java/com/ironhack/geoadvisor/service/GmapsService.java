@@ -7,6 +7,7 @@ import com.ironhack.geoadvisor.proxy.GeocodingProxy;
 import com.ironhack.geoadvisor.proxy.PlacesProxy;
 import com.sun.jdi.request.InvalidRequestStateException;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,24 @@ public class GmapsService {
         processResponseStatus(response);
         if (response.getResults().size() == 0) return null;
         return response.getResults().get(0).getGeometry().getLocation();
+    }
+
+    public String getAddress(Location location) throws Exception {
+        var formattedLocation = "%s,%s".formatted(location.getLatitude(),location.getLongitude());
+        var response = geocodingProxy.getInverseLocation(apiKey, formattedLocation);
+        processResponseStatus(response);
+        if (response.getResults().size() == 0) return null;
+        ArrayList<String> addressResults = (ArrayList<String>)response.getResults().stream().map(GeocodeResult::getFormattedAddress).toList();
+
+        for (int i = addressResults.size()-1; i >= 0; i--) {
+            var toRemove = addressResults.get(i);
+            for (int j = i-1; j >= 0; j--) {
+                var address = addressResults.get(j).replace(toRemove, "");
+                addressResults.remove(j);
+                addressResults.add(j, address);
+            }
+        }
+        return String.join("\n", addressResults);
     }
 
     public List<Restaurant> getNearbyRestaurants(Location location, int radius, String keyword)
