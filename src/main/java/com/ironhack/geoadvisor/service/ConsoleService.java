@@ -121,7 +121,7 @@ public class ConsoleService {
         return ask(title);
     }
 
-    public Object askChooseObject(List<Object> objects, String title) {
+    public Object askChooseObject(List<Object> objects, String title, Location... locations) {
         if (objects.size() == 0) {
             System.out.print("No results found\n");
             askContinue();
@@ -129,7 +129,7 @@ public class ConsoleService {
         }
         var className = objects.get(0).getClass().getSimpleName();
         title = (title != null) ? title : "Please select a %s:".formatted(className);
-        return askListMenu(title, objects);
+        return askListMenu(title, objects, locations);
     }
 
 
@@ -138,11 +138,11 @@ public class ConsoleService {
         return response.equals("yes");
     }
 
-    public Object askListMenu(String title, List<Object> list) {
+    public Object askListMenu(String title, List<Object> list, Location... locations) {
         int offset = 0;
         do {
             Prints.clearConsole("");
-            var menu = buildListMenu(title, list, offset);
+            var menu = buildListMenu(title, list, offset, locations);
             System.out.println(menu);
             String input = getInput();
 
@@ -180,12 +180,19 @@ public class ConsoleService {
         }
     }
 
-    private String buildListMenu(String title, List<Object> list, int offset) {
+    private String buildListMenu(String title, List<Object> list, int offset, Location... locations) {
         StringBuilder menu = new StringBuilder(String.format("%s\n\n", title));
+
+        StringBuilder locationsText = new StringBuilder("LOCATIONS:\n");
+        for (int i = 0; i < locations.length; i++) {
+            locationsText.append("(%s) - %s\n".formatted(i + 1, locations[i].getAddress()));
+        }
+        menu.append(locationsText).append("\n");
+
         var table = Colors.BLACK + Colors.WHITE_BACKGROUND;
         if (list.size() > 0) {
             var object = list.get(0);
-            if (object instanceof Restaurant) table += buildRestaurantsTable(list, offset);
+            if (object instanceof Restaurant) table += buildRestaurantsTable(list, offset, locations);
         }
         menu.append(Prints.tableHeadersToBold(table));
         menu.append(Colors.RESET + "\n('back' --> go back | 'export [FILE_NAME.json]' = extract to JSON)\n");
@@ -203,20 +210,30 @@ public class ConsoleService {
         return menu.toString();
     }
 
-    public String buildRestaurantsTable(List<Object> restaurants, int offset) {
-        var headersArray = new String[]{" ", "NAME", "RATING", "# REVIEWS", "PRICE", "ADDRESS", " "};
+    public String buildRestaurantsTable(List<Object> restaurants, int offset, Location... locations) {
+        var headers = new ArrayList<>(List.of("", " ", "NAME", "RATING", "# REVIEWS", "PRICE", "ADDRESS"));
+
+        for (int i = 0; i < locations.length; i++) {
+            headers.add("DIST (%s)".formatted(i+1));
+        }
+
         var data = new ArrayList<String[]>();
         int limit = Math.min(offset + 10, restaurants.size());
         for (int i = offset; i < limit; i++) {
             var r = (Restaurant)restaurants.get(i);
-            String favourite = r.isFavourite() ? "\uD83D\uDCCD" : " ";
+            String favourite = r.isFavourite() ? "\uD83D\uDCCD" : "";
             String priceLevel = "💰".repeat(r.getPriceLevel());
-            data.add(new String[]{
-                    String.valueOf(i+1), r.getName(), String.valueOf(r.getRating()),
-                    String.valueOf(r.getReviewsNumber()), priceLevel, r.getAddress(), favourite
-            });
+            var row = new ArrayList<>(List.of(
+                    favourite, String.valueOf(i+1), r.getName(), String.valueOf(r.getRating()),
+                    String.valueOf(r.getReviewsNumber()), priceLevel, r.getAddress()
+            ));
+            for (Location location : locations) {
+                var distance = Coordinates.getDistance(location, new Location(r.getLatitude(), r.getLongitude()));
+                row.add(String.valueOf(distance));
+            }
+            data.add(row.toArray(String[]::new));
         }
-        return AsciiTable.getTable(headersArray, data.toArray(String[][]::new));
+        return AsciiTable.getTable(headers.toArray(String[]::new), data.toArray(String[][]::new));
     }
 
     public void askContinue() {
