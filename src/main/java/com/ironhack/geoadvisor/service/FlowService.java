@@ -93,7 +93,7 @@ public class FlowService {
         if (restaurants == null) {
             restaurants = favouritesSVC.getAll();
         }
-        var restaurantObj = consoleSVC.askChooseObject(new ArrayList<>(restaurants), title);
+        var restaurantObj = consoleSVC.askChooseObject(new ArrayList<>(restaurants), title, locations);
         if (restaurantObj != null) {
             singleMenu((Restaurant)restaurantObj, locations);
         } else {
@@ -102,7 +102,7 @@ public class FlowService {
         for (Restaurant restaurant : restaurants) {
             restaurant.setFavourite(favouritesSVC.exists(restaurant));
         }
-        showRestaurants(restaurants);
+        showRestaurants(restaurants, locations);
     }
 
     private void centerSearch() {
