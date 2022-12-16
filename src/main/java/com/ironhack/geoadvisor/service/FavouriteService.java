@@ -23,4 +23,8 @@ public class FavouriteService {
         restaurant.setFavourite(true);
         repository.save(restaurant);
     }
+
+    public void remove(Restaurant restaurant) {
+        repository.deleteById(restaurant.getId());
+    }
 }

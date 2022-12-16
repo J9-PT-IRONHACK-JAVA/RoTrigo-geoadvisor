@@ -19,6 +19,12 @@ public interface PlacesProxy {
             @RequestParam(value = "keyword", required = false) String keyword
             );
 
+    @GetMapping("/nearbysearch/json")
+    PlacesResponse getNextRestaurants(
+            @RequestParam("key") String key,
+            @RequestParam("pagetoken") String pageToken
+            );
+
     @GetMapping("/details/json")
     PlaceDetailsResponse getRestaurantDetails(
             @RequestParam("key") String key,

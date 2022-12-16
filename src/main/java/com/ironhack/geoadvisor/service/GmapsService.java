@@ -5,12 +5,13 @@ import com.ironhack.geoadvisor.enums.GmapsApiStatus;
 import com.ironhack.geoadvisor.model.Restaurant;
 import com.ironhack.geoadvisor.proxy.GeocodingProxy;
 import com.ironhack.geoadvisor.proxy.PlacesProxy;
+import com.sun.jdi.request.InvalidRequestStateException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +41,37 @@ public class GmapsService {
                 keyword
         );
         processResponseStatus(response);
-        return response.getResults().stream().map(this::mapRestaurant).toList();
+        var restaurants = new ArrayList<>(response.getResults().stream().map(this::mapRestaurant).toList());
+        var nextPageToken = response.getNextPageToken();
+        getNextRestaurants(nextPageToken, restaurants);
+        sortByRating(restaurants);
+        return restaurants;
+    }
+
+    // Calls Gmaps proxy to get next page of restaurants controlling exceptions
+    private void getNextRestaurants(String nextPageToken, ArrayList<Restaurant> restaurants) throws Exception {
+        while (nextPageToken != null) {
+            TimeUnit.MILLISECONDS.sleep(1000);
+            var response = placesProxy.getNextRestaurants(apiKey, nextPageToken);
+            try {
+                processResponseStatus(response);
+            } catch (InvalidRequestStateException e) {
+                continue;
+            }
+            restaurants.addAll(response.getResults().stream().map(this::mapRestaurant).toList());
+            nextPageToken = response.getNextPageToken();
+        }
+    }
+
+
+    private void sortByRating(ArrayList<Restaurant> restaurants) {
+        restaurants.sort((r1, r2) -> {
+            var rating1 = (r1.getRating() == null) ? 0 : r1.getRating();
+            var rating2 = (r2.getRating() == null) ? 0 : r2.getRating();
+            if (rating1 == rating2)
+                return 0;
+            return rating1 > rating2 ? -1 : 1;
+        });
     }
 
     public Restaurant getRestaurantDetails(Restaurant restaurant) throws Exception {
@@ -67,6 +98,7 @@ public class GmapsService {
         switch (status) {
             case ACCESS_DENIED -> throw new Exception("Error: access denied to Gmaps API");
             case OK, ZERO_RESULTS -> {}
+            case INVALID_REQUEST -> throw new InvalidRequestStateException("Too fast");
             default -> throw new Exception("Error: Gmaps API error %s\n".formatted(status));
         }
     }

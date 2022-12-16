@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +28,8 @@ public class FlowService {
     public void mainMenu() {
         String title = "What do you want to do?";
         var option = consoleSVC.askMainMenu(MenuOption.MAIN, title);
-        switch (option){
+        if (option == null) start();
+        switch (Objects.requireNonNull(option)){
             case SIMPLE_SEARCH -> simpleSearch();
             case CENTER_SEARCH -> centerSearch();
             case SEE_FAVOURITES -> showRestaurants(null);
@@ -40,16 +42,23 @@ public class FlowService {
         var optionList = new ArrayList<MenuOption>();
         if (restaurant.isFavourite()) {
             optionList.add(MenuOption.REMOVE_FAVOURITE);
-            optionList.add(MenuOption.UPDATE_FAVOURITE);
         } else {
             optionList.add(MenuOption.SAVE_FAVOURITE);
         }
-        if (!restaurant.hasDetails()) optionList.add(MenuOption.GET_MORE_DETAILS);
+        if (!restaurant.hasDetails()) {
+            optionList.add(MenuOption.GET_MORE_DETAILS);
+        } else {
+            optionList.add(MenuOption.UPDATE_FAVOURITE);
+        }
+        optionList.add(MenuOption.TO_MAIN_MENU);
 
         var option = consoleSVC.askSingleMenu(restaurant, optionList.toArray(MenuOption[]::new));
         if (option == null) return;
         switch (option) {
-            case GET_MORE_DETAILS -> getDetails(restaurant);
+            case GET_MORE_DETAILS -> {
+                restaurant = getDetails(restaurant);
+                singleMenu(restaurant);
+            }
             case SAVE_FAVOURITE, UPDATE_FAVOURITE -> saveFavourite(restaurant);
             case REMOVE_FAVOURITE -> removeFavourite(restaurant);
             case TO_MAIN_MENU -> mainMenu();
@@ -57,13 +66,22 @@ public class FlowService {
     }
 
     private void removeFavourite(Restaurant restaurant) {
+        favouritesSVC.remove(restaurant);
     }
 
     private void saveFavourite(Restaurant restaurant) {
         favouritesSVC.saveOrUpdate(restaurant);
     }
 
-    private void getDetails(Restaurant restaurant) {
+    private Restaurant getDetails(Restaurant restaurant) {
+        try {
+            restaurant = gmapsSVC.getRestaurantDetails(restaurant);
+            System.out.println("Restaurant details updated!");
+            return restaurant;
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return restaurant;
+        }
     }
 
     private void showRestaurants(List<Restaurant> restaurants) {
@@ -71,11 +89,14 @@ public class FlowService {
         if (restaurants == null) {
             restaurants = favouritesSVC.getAll();
         }
-        var restaurant = consoleSVC.askChooseObject(new ArrayList<>(restaurants), title);
-        if (restaurant != null) {
-            singleMenu((Restaurant)restaurant);
+        var restaurantObj = consoleSVC.askChooseObject(new ArrayList<>(restaurants), title);
+        if (restaurantObj != null) {
+            singleMenu((Restaurant)restaurantObj);
         } else {
             return;
+        }
+        for (Restaurant restaurant : restaurants) {
+            restaurant.setFavourite(favouritesSVC.exists(restaurant));
         }
         showRestaurants(restaurants);
     }

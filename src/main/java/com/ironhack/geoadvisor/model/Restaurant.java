@@ -1,5 +1,6 @@
 package com.ironhack.geoadvisor.model;
 
+import com.google.gson.annotations.Expose;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,10 +18,16 @@ public class Restaurant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String placeId;
+
+    @Expose
     private String name;
+    @Expose
     private Double rating;
+    @Expose
     private Integer priceLevel;
+    @Expose
     private String address;
+    @Expose
     private String phoneNumber;
     private String website;
     private BigDecimal latitude;
@@ -36,7 +43,7 @@ public class Restaurant {
     }
 
     public boolean hasDetails(){
-        return this.phoneNumber == null;
+        return this.phoneNumber != null;
     }
     // TODO toString() method for nice printing
 }

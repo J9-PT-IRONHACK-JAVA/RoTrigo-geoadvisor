@@ -195,7 +195,7 @@ public class ConsoleService {
         int limit = Math.min(offset + 10, restaurants.size());
         for (int i = offset; i < limit; i++) {
             var r = (Restaurant)restaurants.get(i);
-            String favourite = r.isFavourite() ? "❤️ " : " ";
+            String favourite = r.isFavourite() ? "\uD83D\uDCCD" : " ";
             String priceLevel = "💰".repeat(r.getPriceLevel());
             data.add(new String[]{
                     String.valueOf(i+1), r.getName(), String.valueOf(r.getRating()),
@@ -205,25 +205,9 @@ public class ConsoleService {
         return AsciiTable.getTable(headersArray, data.toArray(String[][]::new));
     }
 
-
-
-    public void printReport(String[] headers, List<List<Object>> result) {
-        Prints.clearConsole("");
-        if (result == null) {
-            System.out.println("No results found");
-        } else {
-            String[][] data = result.stream().map(l -> l.stream().map(Object::toString)
-                            .toArray(String[]::new)).toArray(String[][]::new);
-            var report = Colors.BLACK + Colors.WHITE_BACKGROUND + AsciiTable.getTable(headers, data);
-            System.out.println(Prints.tableHeadersToBold(report));
-        }
-        askContinue();
-    }
-
     public void askContinue() {
         System.out.println(Colors.RESET + "Press any key... ");
         getInput();
     }
-
 
 }
