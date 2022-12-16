@@ -40,6 +40,20 @@ public class FlowService {
     }
 
     private void singleMenu(Restaurant restaurant, Location... locations) {
+        var option = consoleSVC.askSingleMenu(restaurant, getSingleMenuOptions(restaurant), locations);
+        if (option == null) return;
+        switch (option) {
+            case GET_MORE_DETAILS -> {
+                restaurant = getDetails(restaurant);
+                singleMenu(restaurant);
+            }
+            case SAVE_FAVOURITE, UPDATE_FAVOURITE -> saveFavourite(restaurant);
+            case REMOVE_FAVOURITE -> removeFavourite(restaurant);
+            case TO_MAIN_MENU -> mainMenu();
+        }
+    }
+
+    private static MenuOption[] getSingleMenuOptions(Restaurant restaurant) {
         var optionList = new ArrayList<MenuOption>();
         if (restaurant.isFavourite()) {
             optionList.add(MenuOption.REMOVE_FAVOURITE);
@@ -52,18 +66,7 @@ public class FlowService {
             optionList.add(MenuOption.UPDATE_FAVOURITE);
         }
         optionList.add(MenuOption.TO_MAIN_MENU);
-
-        var option = consoleSVC.askSingleMenu(restaurant, optionList.toArray(MenuOption[]::new), locations);
-        if (option == null) return;
-        switch (option) {
-            case GET_MORE_DETAILS -> {
-                restaurant = getDetails(restaurant);
-                singleMenu(restaurant);
-            }
-            case SAVE_FAVOURITE, UPDATE_FAVOURITE -> saveFavourite(restaurant);
-            case REMOVE_FAVOURITE -> removeFavourite(restaurant);
-            case TO_MAIN_MENU -> mainMenu();
-        }
+        return optionList.toArray(MenuOption[]::new);
     }
 
     private void removeFavourite(Restaurant restaurant) {
@@ -108,7 +111,7 @@ public class FlowService {
 
         var locations = new ArrayList<Location>();
         for (int i = 0; i < numLocations; i++) {
-            var location = askLocation();
+            var location = askLocation("Introduce Address %s".formatted(i+1));
             locations.add(location);
         }
 
@@ -118,6 +121,16 @@ public class FlowService {
             \tlatitude = %s
             \tlongitude = %s
             """, center.getLatitude(), center.getLongitude());
+
+        getAddressFromLocation(center);
+        consoleSVC.askContinue();
+        var restaurants = searchRestaurants(center);
+        if (restaurants == null) return;
+
+        showRestaurants(restaurants, locations.toArray(Location[]::new));
+    }
+
+    private void getAddressFromLocation(Location center) {
         try {
             var centerAddress = gmapsSVC.getAddress(center);
             if (centerAddress == null || centerAddress.equals("")) {
@@ -128,15 +141,10 @@ public class FlowService {
         } catch (Exception e) {
             System.err.println("Couldn't get address from coordinates :(");
         }
-        consoleSVC.askContinue();
-        var restaurants = searchRestaurants(center);
-        if (restaurants == null) return;
-
-        showRestaurants(restaurants, locations.toArray(Location[]::new));
     }
 
     private void simpleSearch() {
-        var location = askLocation();
+        var location = askLocation(null);
         if (location == null) return;
         System.out.printf("""
             Address located successfully! These are the coordinates:
@@ -173,8 +181,9 @@ public class FlowService {
         return null;
     }
 
-    private Location askLocation(){
-        var address = consoleSVC.ask("Please introduce a valid address:");
+    private Location askLocation(String title){
+        if (title == null) title = "Please introduce a valid address:";
+        var address = consoleSVC.ask(title);
         try {
             var location = gmapsSVC.getLocation(address);
             if (location != null) return location;
@@ -183,7 +192,7 @@ public class FlowService {
             System.err.println(e.getMessage());
         }
         var repeat = consoleSVC.askConfirmation("Do you want to try again?");
-        if (repeat) askLocation();
+        if (repeat) askLocation(title);
         return null;
     }
 

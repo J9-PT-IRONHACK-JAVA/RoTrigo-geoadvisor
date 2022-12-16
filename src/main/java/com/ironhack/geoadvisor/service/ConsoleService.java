@@ -32,8 +32,8 @@ public class ConsoleService {
         var restLocation = new Location(restaurant.getLatitude(), restaurant.getLongitude());
         for (int i = 0; i < locations.length; i++) {
             var locationDistance = Coordinates.getDistance(locations[i], restLocation);
-            distances.append("Location %s: %s\nDistance to restaurant (m): %s\n\n".formatted(
-                    i, locations[i].getAddress(), locationDistance));
+            distances.append("User Location %s: %s\nDistance to restaurant (m): %s\n\n".formatted(
+                    i+1, locations[i].getAddress(), locationDistance));
         }
 
         var title =  """
@@ -41,8 +41,8 @@ public class ConsoleService {
                
                 %s
                 %s
-                What do you want to do with this restaurant?
-                """.formatted(Colors.YELLOW_BOLD,Colors.WHITE_BRIGHT,restaurant.toString(),distances);
+                What do you want to do with this restaurant?""".formatted(
+                        Colors.YELLOW_BOLD,Colors.WHITE_BRIGHT,restaurant.toString(),distances);
 
         return askMenu(title, options, true);
     }
@@ -204,7 +204,7 @@ public class ConsoleService {
     }
 
     public String buildRestaurantsTable(List<Object> restaurants, int offset) {
-        var headersArray = new String[]{" ", "NAME", "RATING", "PRICE", "ADDRESS", " "};
+        var headersArray = new String[]{" ", "NAME", "RATING", "# REVIEWS", "PRICE", "ADDRESS", " "};
         var data = new ArrayList<String[]>();
         int limit = Math.min(offset + 10, restaurants.size());
         for (int i = offset; i < limit; i++) {
@@ -213,7 +213,7 @@ public class ConsoleService {
             String priceLevel = "💰".repeat(r.getPriceLevel());
             data.add(new String[]{
                     String.valueOf(i+1), r.getName(), String.valueOf(r.getRating()),
-                    priceLevel, r.getAddress(), favourite
+                    String.valueOf(r.getReviewsNumber()), priceLevel, r.getAddress(), favourite
             });
         }
         return AsciiTable.getTable(headersArray, data.toArray(String[][]::new));

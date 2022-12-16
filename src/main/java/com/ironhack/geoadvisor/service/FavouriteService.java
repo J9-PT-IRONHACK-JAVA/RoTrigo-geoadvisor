@@ -16,7 +16,7 @@ public class FavouriteService {
     }
 
     public boolean exists(Restaurant restaurant) {
-        return repository.existsByPlaceId(restaurant.getPlaceId());
+        return repository.existsById(restaurant.getId());
     }
 
     public void saveOrUpdate(Restaurant restaurant) {

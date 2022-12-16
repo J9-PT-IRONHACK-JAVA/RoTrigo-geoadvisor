@@ -15,14 +15,14 @@ public class Restaurant {
     public static final String TABLE_NAME = "favourite_restaurants";
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String placeId;
+    private String Id;
 
     @Expose
     private String name;
     @Expose
     private Double rating;
+    @Expose
+    private Integer reviewsNumber;
     @Expose
     private Integer priceLevel;
     @Expose
@@ -34,11 +34,12 @@ public class Restaurant {
     private BigDecimal longitude;
     private boolean isFavourite = false;
 
-    public Restaurant(String placeId, String name, Double rating, Integer priceLevel,
+    public Restaurant(String Id, String name, Double rating, Integer reviewsNumber, Integer priceLevel,
                       String address, BigDecimal latitude, BigDecimal longitude) {
-        this.placeId = placeId;
+        this.Id = Id;
         this.name = name;
         this.rating = rating;
+        this.reviewsNumber = reviewsNumber;
         this.priceLevel = (priceLevel == null) ? 0 : priceLevel;
         this.address = address;
         this.latitude = latitude;
@@ -51,14 +52,16 @@ public class Restaurant {
 
     public String toString(){
         var text ="""
-                Name        = %s
-                Rating      = %s
-                Price level = %s
-                Address     = %s
-                Favourite   = %s
+                Name         = %s
+                Rating       = %s
+                Reviews      = %s
+                Price level  = %s
+                Address      = %s
+                Favourite    = %s
                 """.formatted(
                         getName(),
                         getRating(),
+                        getReviewsNumber(),
                         getPriceLevel(),
                         getAddress(),
                         isFavourite()?"YES":"NO"

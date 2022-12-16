@@ -7,12 +7,12 @@ import com.ironhack.geoadvisor.proxy.GeocodingProxy;
 import com.ironhack.geoadvisor.proxy.PlacesProxy;
 import com.sun.jdi.request.InvalidRequestStateException;
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,17 +38,7 @@ public class GmapsService {
         var response = geocodingProxy.getInverseLocation(apiKey, formattedLocation);
         processResponseStatus(response);
         if (response.getResults().size() == 0) return null;
-        ArrayList<String> addressResults = (ArrayList<String>)response.getResults().stream().map(GeocodeResult::getFormattedAddress).toList();
-
-        for (int i = addressResults.size()-1; i >= 0; i--) {
-            var toRemove = addressResults.get(i);
-            for (int j = i-1; j >= 0; j--) {
-                var address = addressResults.get(j).replace(toRemove, "");
-                addressResults.remove(j);
-                addressResults.add(j, address);
-            }
-        }
-        return String.join("\n", addressResults);
+        return getApproxAddress(response);
     }
 
     public List<Restaurant> getNearbyRestaurants(Location location, int radius, String keyword)
@@ -62,7 +52,11 @@ public class GmapsService {
                 keyword
         );
         processResponseStatus(response);
-        var restaurants = new ArrayList<>(response.getResults().stream().map(this::mapRestaurant).toList());
+        var results = new ArrayList<PlacesResult>();
+        for (PlacesResult result : response.getResults()) {
+            if (result.getBusinessStatus().equals("OPERATIONAL")) results.add(result);
+        }
+        var restaurants = new ArrayList<>(results.stream().map(this::mapRestaurant).toList());
         var nextPageToken = response.getNextPageToken();
         getNextRestaurants(nextPageToken, restaurants);
         sortByRating(restaurants);
@@ -98,7 +92,7 @@ public class GmapsService {
     public Restaurant getRestaurantDetails(Restaurant restaurant) throws Exception {
         var response = placesProxy.getRestaurantDetails(
                 apiKey,
-                restaurant.getPlaceId(),
+                restaurant.getId(),
                 "formatted_phone_number,website,serves_vegetarian_food"
         );
         processResponseStatus(response);
@@ -129,6 +123,7 @@ public class GmapsService {
                 result.getPlaceId(),
                 result.getName(),
                 result.getRating(),
+                result.getUserRatingsTotal(),
                 result.getPriceLevel(),
                 result.getVicinity(),
                 result.getGeometry().getLocation().getLatitude(),
@@ -136,5 +131,27 @@ public class GmapsService {
         );
         restaurant.setFavourite(favouriteSVC.exists(restaurant));
         return restaurant;
+    }
+
+    private static String getApproxAddress(GeocodeResponse response) {
+        var addressResults = response.getResults().stream().map(GeocodeResult::getFormattedAddress)
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        for (int i = addressResults.size()-1; i >= 0; i--) {
+            var toRemove = addressResults.get(i);
+            for (int j = i-1; j >= 0; j--) {
+                var address = addressResults.get(j).replace(toRemove, "");
+                addressResults.remove(j);
+                addressResults.add(j, address);
+            }
+        }
+
+        var address = "";
+        for (int i = 0; i < 6; i++) {
+            int j = addressResults.size()-i-1;
+            if (j < 0) break;
+            address = addressResults.get(j) + address;
+        }
+        return "\nApproximated address: \n" + String.join("\n", address);
     }
 }
