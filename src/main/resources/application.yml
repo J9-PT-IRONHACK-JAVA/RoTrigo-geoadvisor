@@ -1,12 +1,12 @@
 gmaps:
   apiKey: ${GMAPS_APIKEY}
 server:
-  port: 8083
+  port: 8085
 spring:
   profiles:
     active: demo
   datasource:
-    url: jdbc:mysql://localhost:3306/geoadvisor?useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3302/geoadvisor?useSSL=false&allowPublicKeyRetrieval=true
     username: geoadvisor
     password: geoadvisor
     driver-class-name: com.mysql.cj.jdbc.Driver

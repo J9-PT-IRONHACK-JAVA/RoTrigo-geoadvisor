@@ -1,5 +1,6 @@
 package com.ironhack.geoadvisor;
 
+import com.ironhack.geoadvisor.dto.Location;
 import com.ironhack.geoadvisor.dto.PlaceDetails;
 import com.ironhack.geoadvisor.dto.PlacesResult;
 import com.ironhack.geoadvisor.proxy.GeocodingProxy;
@@ -11,6 +12,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 import static java.lang.System.exit;
 
@@ -28,19 +32,24 @@ public class AppStarter implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        var lat1 = consoleSVC.ask("Please introduce latitude 1:");
-        var lon1 = consoleSVC.ask("Please introduce longitude 1:");
-        var lat2 = consoleSVC.ask("Please introduce latitude 2:");
-        var lon2 = consoleSVC.ask("Please introduce longitude 2:");
-        var lat3 = consoleSVC.ask("Please introduce latitude 3:");
-        var lon3 = consoleSVC.ask("Please introduce longitude 3:");
+        /*
+        41.39379, 2.17102
+        41.85708, 2.30125
+        41.14071, 1.40217
+        */
 
-        //var distance =coordSVC.coordinatesDistance(Double.parseDouble(lat1),Double.parseDouble(lon1),Double.parseDouble(lat2),Double.parseDouble(lon2));
-        //var midPoint=coordSVC.midPoint(Double.parseDouble(lat1),Double.parseDouble(lon1),Double.parseDouble(lat2),Double.parseDouble(lon2),Double.parseDouble(lat3),Double.parseDouble(lon3));
-        var midPoint=coordSVC.midPoint(lat1,lon1,lat2,lon2,lat3,lon3);
+        var location1 = new Location(new BigDecimal("41.39379"), new BigDecimal("2.17102"));
+        var location2 = new Location(new BigDecimal("41.85708"), new BigDecimal("2.30125"));
+        var location3 = new Location(new BigDecimal("41.14071"), new BigDecimal("1.40217"));
+
+
+        var distance = coordSVC.coordinatesDistance(location1, location2);
+        System.out.println(distance.toString());
+
+        var midPoint=coordSVC.midPoint(location1, location2, location3);
         //System.out.println(distance);
-        System.out.println(midPoint[0]);
-        System.out.println(midPoint[1]);
+        System.out.println(midPoint.getLatitude());
+        System.out.println(midPoint.getLongitude());
 
 
 
