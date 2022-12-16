@@ -5,6 +5,7 @@ import com.ironhack.geoadvisor.dto.PlacesResult;
 import com.ironhack.geoadvisor.proxy.GeocodingProxy;
 import com.ironhack.geoadvisor.proxy.PlacesProxy;
 import com.ironhack.geoadvisor.service.ConsoleService;
+import com.ironhack.geoadvisor.service.CoordinatesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -20,12 +21,29 @@ public class AppStarter implements CommandLineRunner {
     private final GeocodingProxy geocodingProxy;
     private final PlacesProxy placesProxy;
     private final ConsoleService consoleSVC;
+    private final CoordinatesService coordSVC;
 
     @Value("${gmaps.apiKey}")
     private String apiKey;
 
     @Override
     public void run(String... args) {
+        var lat1 = consoleSVC.ask("Please introduce latitude 1:");
+        var lon1 = consoleSVC.ask("Please introduce longitude 1:");
+        var lat2 = consoleSVC.ask("Please introduce latitude 2:");
+        var lon2 = consoleSVC.ask("Please introduce longitude 2:");
+        var lat3 = consoleSVC.ask("Please introduce latitude 3:");
+        var lon3 = consoleSVC.ask("Please introduce longitude 3:");
+
+        //var distance =coordSVC.coordinatesDistance(Double.parseDouble(lat1),Double.parseDouble(lon1),Double.parseDouble(lat2),Double.parseDouble(lon2));
+        //var midPoint=coordSVC.midPoint(Double.parseDouble(lat1),Double.parseDouble(lon1),Double.parseDouble(lat2),Double.parseDouble(lon2),Double.parseDouble(lat3),Double.parseDouble(lon3));
+        var midPoint=coordSVC.midPoint(lat1,lon1,lat2,lon2,lat3,lon3);
+        //System.out.println(distance);
+        System.out.println(midPoint[0]);
+        System.out.println(midPoint[1]);
+
+
+
         var address = consoleSVC.ask("Please introduce address to locate:");
         var geocodeResponse = geocodingProxy.getLocation(apiKey, address);
 
