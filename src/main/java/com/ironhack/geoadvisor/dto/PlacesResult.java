@@ -18,7 +18,6 @@ public class PlacesResult {
     private Double rating;
     @JsonProperty("price_level")
     private Integer priceLevel;
-    private List<String> types;
     @JsonProperty("user_ratings_total")
     private Integer userRatingsTotal;
     private String vicinity;

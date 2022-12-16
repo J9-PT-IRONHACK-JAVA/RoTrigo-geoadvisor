@@ -8,4 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface GeocodingProxy {
     @GetMapping()
     GeocodeResponse getLocation(@RequestParam("key") String key, @RequestParam("address") String address);
+
+    @GetMapping()
+    GeocodeResponse getInverseLocation(@RequestParam("key") String key, @RequestParam("latlng") String location);
 }

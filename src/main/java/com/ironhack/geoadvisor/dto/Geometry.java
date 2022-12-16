@@ -7,5 +7,6 @@ import lombok.ToString;
 @Data
 public class Geometry {
     private Location location;
+
 }
 

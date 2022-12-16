@@ -1,8 +1,11 @@
 package com.ironhack.geoadvisor.service;
 
 import com.github.freva.asciitable.AsciiTable;
+import com.ironhack.geoadvisor.dto.Location;
 import com.ironhack.geoadvisor.enums.MenuOption;
+import com.ironhack.geoadvisor.model.Restaurant;
 import com.ironhack.geoadvisor.utils.Colors;
+import com.ironhack.geoadvisor.utils.Coordinates;
 import com.ironhack.geoadvisor.utils.Prints;
 import com.ironhack.geoadvisor.utils.Tools;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +23,27 @@ public class ConsoleService {
     private final Scanner prompt = new Scanner(System.in);
 
 
-
     public MenuOption askMainMenu(MenuOption[] options, String title) {
-        title += "What do you want to do?";
+        return askMenu(title, options, true);
+    }
+
+    public MenuOption askSingleMenu(Restaurant restaurant, MenuOption[] options, Location... locations) {
+        var distances = new StringBuilder();
+        var restLocation = new Location(restaurant.getLatitude(), restaurant.getLongitude());
+        for (int i = 0; i < locations.length; i++) {
+            var locationDistance = Coordinates.getDistance(locations[i], restLocation);
+            distances.append("User Location %s: %s\nDistance to restaurant (m): %s\n\n".formatted(
+                    i+1, locations[i].getAddress(), locationDistance));
+        }
+
+        var title =  """
+                \t%sRESTAURANT MENU%s
+               
+                %s
+                %s
+                What do you want to do with this restaurant?""".formatted(
+                        Colors.YELLOW_BOLD,Colors.WHITE_BRIGHT,restaurant.toString(),distances);
+
         return askMenu(title, options, true);
     }
 
@@ -164,11 +185,7 @@ public class ConsoleService {
         var table = Colors.BLACK + Colors.WHITE_BACKGROUND;
         if (list.size() > 0) {
             var object = list.get(0);
-            /*if (object instanceof Lead) table += buildLeadsTable(list, offset);
-            if (object instanceof Contact) table += buildContactsTable(list, offset);
-            if (object instanceof Account) table += buildAccountsTable(list, offset);
-            if (object instanceof Opportunity) table += buildOpportunitiesTable(list, offset);
-            if (object instanceof User) table += buildUsersTable(list, offset);*/
+            if (object instanceof Restaurant) table += buildRestaurantsTable(list, offset);
         }
         menu.append(Prints.tableHeadersToBold(table));
         menu.append(Colors.RESET + "\n('back' --> go back | 'export [FILE_NAME.json]' = extract to JSON)\n");
@@ -186,42 +203,25 @@ public class ConsoleService {
         return menu.toString();
     }
 
-
-    /*
-    public String buildUsersTable(List<Object> users, int offset) {
-        var headersArray = new String[]{" ", "Username", "Level", "Manager"};
+    public String buildRestaurantsTable(List<Object> restaurants, int offset) {
+        var headersArray = new String[]{" ", "NAME", "RATING", "# REVIEWS", "PRICE", "ADDRESS", " "};
         var data = new ArrayList<String[]>();
-        int limit = Math.min(offset + 10, users.size());
+        int limit = Math.min(offset + 10, restaurants.size());
         for (int i = offset; i < limit; i++) {
-            var u = (User)users.get(i);
-            String manager = (u.getManager() == null)? "" : u.getManager().getUserName();
+            var r = (Restaurant)restaurants.get(i);
+            String favourite = r.isFavourite() ? "\uD83D\uDCCD" : " ";
+            String priceLevel = "💰".repeat(r.getPriceLevel());
             data.add(new String[]{
-                    String.valueOf(i+1), u.getUserName(), u.getLevel().toString(),
-                    manager
+                    String.valueOf(i+1), r.getName(), String.valueOf(r.getRating()),
+                    String.valueOf(r.getReviewsNumber()), priceLevel, r.getAddress(), favourite
             });
         }
         return AsciiTable.getTable(headersArray, data.toArray(String[][]::new));
-    }*/
-
-
-
-    public void printReport(String[] headers, List<List<Object>> result) {
-        Prints.clearConsole("");
-        if (result == null) {
-            System.out.println("No results found");
-        } else {
-            String[][] data = result.stream().map(l -> l.stream().map(Object::toString)
-                            .toArray(String[]::new)).toArray(String[][]::new);
-            var report = Colors.BLACK + Colors.WHITE_BACKGROUND + AsciiTable.getTable(headers, data);
-            System.out.println(Prints.tableHeadersToBold(report));
-        }
-        askContinue();
     }
 
     public void askContinue() {
         System.out.println(Colors.RESET + "Press any key... ");
         getInput();
     }
-
 
 }
