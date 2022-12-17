@@ -51,15 +51,13 @@ public class Prints {
 
     public static String header(){
         return Colors.BLUE_BOLD + """
-                _____             ___      _       _               \s
+                 _____             ___      _       _               \s
                 |  __ \\           / _ \\    | |     (_)              \s
                 | |  \\/ ___  ___ / /_\\ \\ __| |_   ___ ___  ___  _ __\s
                 | | __ / _ \\/ _ \\|  _  |/ _` \\ \\ / / / __|/ _ \\| '__|
                 | |_\\ \\  __/ (_) | | | | (_| |\\ V /| \\__ \\ (_) | |  \s
                  \\____/\\___|\\___/\\_| |_/\\__,_| \\_/ |_|___/\\___/|_|
-                """.formatted(
-                Colors.RESET, Colors.CYAN_BOLD, Colors.RESET, Colors.CYAN_BOLD,
-                Colors.RESET, Colors.CYAN_BOLD, Colors.YELLOW)
+                """
                 + Colors.WHITE_BRIGHT;
     }
     public static void exitProgram() {
