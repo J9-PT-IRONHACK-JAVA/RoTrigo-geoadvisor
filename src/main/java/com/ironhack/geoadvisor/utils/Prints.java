@@ -12,8 +12,20 @@ public class Prints {
 
     public static void welcome(){
         clearConsole(null);
-        String text1 = Colors.YELLOW + """                                
-                """;
+        String text1 ="""
+            %s   .d8888b.                    %s        d8888      888          d8b                                  \s
+            %s  d88P  Y88b                   %s       d88888      888          Y8P                                  \s
+            %s  888    888                   %s      d88P888      888                                               \s
+            %s  888         .d88b.   .d88b.  %s     d88P 888  .d88888 888  888 888 .d8888b   .d88b.  888d888 888d888\s
+            %s  888  88888 d8P  Y8b d88""88b %s    d88P  888 d88" 888 888  888 888 88K      d88""88b 888P"   888P"  \s
+            %s  888    888 88888888 888  888 %s   d88P   888 888  888 Y88  88P 888 "Y8888b. 888  888 888     888    \s
+            %s  Y88b  d88P Y8b.     Y88..88P %s  d8888888888 Y88b 888  Y8bd8P  888      X88 Y88..88P 888     888    \s
+            %s   "Y8888P88  "Y8888   "Y88P"  %s d88P     888  "Y88888   Y88P   888  88888P'  "Y88P"  888     888                                
+            %s  """.formatted(
+                Colors.BLUE, Colors.WHITE,Colors.BLUE, Colors.WHITE,Colors.BLUE, Colors.WHITE,
+                Colors.BLUE, Colors.GREEN,Colors.BLUE, Colors.WHITE,Colors.BLUE, Colors.WHITE,
+                Colors.BLUE, Colors.WHITE,Colors.BLUE, Colors.WHITE,Colors.RESET);
+
         String text2 = """
                      
                 """;
