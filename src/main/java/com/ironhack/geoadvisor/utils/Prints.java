@@ -50,17 +50,32 @@ public class Prints {
 
 
     public static String header(){
-        return Colors.CYAN_BOLD + """
-             
+        return Colors.BLUE_BOLD + """
+                _____             ___      _       _               \s
+                |  __ \\           / _ \\    | |     (_)              \s
+                | |  \\/ ___  ___ / /_\\ \\ __| |_   ___ ___  ___  _ __\s
+                | | __ / _ \\/ _ \\|  _  |/ _` \\ \\ / / / __|/ _ \\| '__|
+                | |_\\ \\  __/ (_) | | | | (_| |\\ V /| \\__ \\ (_) | |  \s
+                 \\____/\\___|\\___/\\_| |_/\\__,_| \\_/ |_|___/\\___/|_|
                 """.formatted(
                 Colors.RESET, Colors.CYAN_BOLD, Colors.RESET, Colors.CYAN_BOLD,
                 Colors.RESET, Colors.CYAN_BOLD, Colors.YELLOW)
                 + Colors.WHITE_BRIGHT;
     }
     public static void exitProgram() {
-        printSlow(Colors.YELLOW +
+        printSlow(Colors.WHITE_BRIGHT +
                 """
-             
+                         .d8888b.                                                                                            \s
+                        d88P  Y88b                                                                                           \s
+                        Y88b.                                                                                                \s
+                         "Y888b.    .d88b.   .d88b.       888  888  .d88b.  888  888      .d8888b   .d88b.   .d88b.  88888b. \s
+                            "Y88b. d8P  Y8b d8P  Y8b      888  888 d88""88b 888  888      88K      d88""88b d88""88b 888 "88b\s
+                              "888 88888888 88888888      888  888 888  888 888  888      "Y8888b. 888  888 888  888 888  888\s
+                        Y88b  d88P Y8b.     Y8b.          Y88b 888 Y88..88P Y88b 888           X88 Y88..88P Y88..88P 888  888\s
+                         "Y8888P"   "Y8888   "Y8888        "Y88888  "Y88P"   "Y88888       88888P'  "Y88P"   "Y88P"  888  888\s
+                                                               888                                                           \s
+                                                          Y8b d88P                                                           \s
+                                                           "Y88P"
                                                                   
                                              """ + Colors.RESET, 100);
     }
