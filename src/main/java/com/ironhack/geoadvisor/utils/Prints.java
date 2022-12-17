@@ -13,18 +13,42 @@ public class Prints {
     public static void welcome(){
         clearConsole(null);
         String text1 ="""
-            %s   .d8888b.                    %s        d8888      888          d8b                                  \s
-            %s  d88P  Y88b                   %s       d88888      888          Y8P                                  \s
-            %s  888    888                   %s      d88P888      888                                               \s
-            %s  888         .d88b.   .d88b.  %s     d88P 888  .d88888 888  888 888 .d8888b   .d88b.  888d888 888d888\s
-            %s  888  88888 d8P  Y8b d88""88b %s    d88P  888 d88" 888 888  888 888 88K      d88""88b 888P"   888P"  \s
-            %s  888    888 88888888 888  888 %s   d88P   888 888  888 Y88  88P 888 "Y8888b. 888  888 888     888    \s
-            %s  Y88b  d88P Y8b.     Y88..88P %s  d8888888888 Y88b 888  Y8bd8P  888      X88 Y88..88P 888     888    \s
-            %s   "Y8888P88  "Y8888   "Y88P"  %s d88P     888  "Y88888   Y88P   888  88888P'  "Y88P"  888     888                                
-            %s  """.formatted(
+                            
+                %s   .d8888b.                    %s        d8888      888          d8b                           \s
+                %s  d88P  Y88b                   %s       d88888      888          Y8P                           \s
+                %s  888    888                   %s      d88P888      888                                        \s
+                %s  888         .d88b.   .d88b.  %s     d88P 888  .d88888 888  888 888 .d8888b   .d88b.  888d888 \s
+                %s  888  88888 d8P  Y8b d88""88b %s    d88P  888 d88" 888 888  888 888 88K      d88""88b 888P"   \s
+                %s  888    888 88888888 888  888 %s   d88P   888 888  888 Y88  88P 888 "Y8888b. 888  888 888     \s
+                %s  Y88b  d88P Y8b.     Y88..88P %s  d8888888888 Y88b 888  Y8bd8P  888      X88 Y88..88P 888     \s
+                %s   "Y8888P88  "Y8888   "Y88P"  %s d88P     888  "Y88888   Y88P   888  88888P'  "Y88P"  888                                    
+                %s  
+                                                            ......                     \s
+                                                       .~7?JYYYYYYJ7!^.                \s
+                                                    .~?Y55555555YYJJJJJ7^.             \s
+                                                   ~J5555555555YJJJJJJJJJ?~            \s
+                                                 .7YYYY555555YJJJJJJJJJJJJJ7.          \s
+                                                 7YYYYYYY55J!^::^!?JJJJJJJJY7          \s
+                                                ^YYYYYYYYJ^        ^JJJJJJJJY^         \s
+                                                7YYYYYYY?^          ~JJJJJJJY!         \s
+                                                7YYYYY?!~:          !YJJJJJJY!         \s
+                                                ~YYYJ!~~~~:        ~JJJJJJJJY^         \s
+                                                 ?J7~~~~~~~~^::::~?YJJJJJJJY?          \s
+                                                 .~~~~~~~~~~~~~!?YJJJJJJJJY?.          \s
+                                                  .^!~~~~~~~~!?JJJJJJJJJJY7.           \s
+                                                    :~~~~~~~7JJJJJJJJJJYJ~             \s
+                                                     .^~~~7JJJJJJJJJJJJ7.              \s
+                                                       .~?JJJJJJJJJJY?^                \s
+                                                        .!JJJJJJJJJJ!.                 \s
+                                                          :?JJJJJJ?:                   \s
+                                                           .?JJJJ?.                    \s
+                                                            .JJJJ:                     \s
+                                                             ^JJ^                      \s
+                                                              ..                       \s
+                %s""".formatted(
                 Colors.BLUE, Colors.WHITE,Colors.BLUE, Colors.WHITE,Colors.BLUE, Colors.WHITE,
                 Colors.BLUE, Colors.GREEN,Colors.BLUE, Colors.WHITE,Colors.BLUE, Colors.WHITE,
-                Colors.BLUE, Colors.WHITE,Colors.BLUE, Colors.WHITE,Colors.RESET);
+                Colors.BLUE, Colors.WHITE,Colors.BLUE, Colors.WHITE,Colors.RED,Colors.RESET);
 
         String text2 = """
                      
@@ -50,13 +74,18 @@ public class Prints {
 
 
     public static String header(){
-        return Colors.BLUE_BOLD + """
-                 _____             ___      _       _               \s
-                |  __ \\           / _ \\    | |     (_)              \s
-                | |  \\/ ___  ___ / /_\\ \\ __| |_   ___ ___  ___  _ __\s
-                | | __ / _ \\/ _ \\|  _  |/ _` \\ \\ / / / __|/ _ \\| '__|
-                | |_\\ \\  __/ (_) | | | | (_| |\\ V /| \\__ \\ (_) | |  \s
-                 \\____/\\___|\\___/\\_| |_/\\__,_| \\_/ |_|___/\\___/|_|
+        return """
+                                
+                \033[1;31m    ░████░    \s\033[1;34m 
+                \033[1;31m  ░████████░  \s\033[1;34m
+                \033[1;31m ░████▒▒████░ \s\033[1;34m  ░░░░░░   ░░░░░░░   ░░░░░░    ░░░░░   ░░░░░░   ░░    ░░  ░░  ░░░░░░░   ░░░░░░   ░░░░░░ \s
+                \033[1;31m ▒███    ███▒ \s\033[1;34m ▒▒        ▒▒       ▒▒    ▒▒  ▒▒   ▒▒  ▒▒   ▒▒  ▒▒    ▒▒  ▒▒  ▒▒       ▒▒    ▒▒  ▒▒   ▒▒\s
+                \033[1;31m ░████▒▒████░ \s\033[1;34m ▒▒   ▒▒▒  ▒▒▒▒▒    ▒▒    ▒▒  ▒▒▒▒▒▒▒  ▒▒   ▒▒  ▒▒    ▒▒  ▒▒  ▒▒▒▒▒▒▒  ▒▒    ▒▒  ▒▒▒▒▒▒ \s
+                \033[1;31m  ░████████░  \s\033[1;34m ▓▓    ▓▓  ▓▓       ▓▓    ▓▓  ▓▓   ▓▓  ▓▓   ▓▓   ▓▓  ▓▓   ▓▓       ▓▓  ▓▓    ▓▓  ▓▓   ▓▓\s
+                \033[1;31m    ░████░    \s\033[1;34m  ██████   ███████   ██████   ██   ██  ██████     ████    ██  ███████   ██████   ██   ██\s
+                \033[1;31m     ░██░     \s\033[1;34m ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                \033[1;31m      ░░      \s\033[1;34m ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       
                 """
                 + Colors.WHITE_BRIGHT;
     }
